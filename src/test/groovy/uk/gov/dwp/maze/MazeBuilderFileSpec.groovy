@@ -20,10 +20,10 @@ class MazeBuilderFileSpec extends Specification {
 
         where:
 
-        filePath    | expectedException        | expectedMessage
-        null        | IllegalArgumentException | 'File path cannot be null.'
-        ''          | IllegalArgumentException | 'File path cannot be empty string.'
-        " "         | IllegalArgumentException | 'File path cannot be empty string.'
+        filePath | expectedException        | expectedMessage
+        null     | IllegalArgumentException | 'File path cannot be null.'
+        ''       | IllegalArgumentException | 'File path cannot be empty string.'
+        " "      | IllegalArgumentException | 'File path cannot be empty string.'
 
     }
 
@@ -63,8 +63,8 @@ class MazeBuilderFileSpec extends Specification {
         then:
         maze.isPresent()
         def mazeObject = maze.get()
-        mazeObject.getSquare().length == 15
-        mazeObject.getSquare()[0].length == 15
+        mazeObject.getBlock().length == 15
+        mazeObject.getBlock()[0].length == 15
 
     }
 

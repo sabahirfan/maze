@@ -1,6 +1,6 @@
 package uk.gov.dwp.maze;
 
-import uk.gov.dwp.maze.domain.Square;
+import uk.gov.dwp.maze.domain.Block;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,7 +12,7 @@ import java.io.IOException;
  */
 public class MazeFactory {
 
-    public static Square[][] buildMazeMapFromString(String inputString) {
+    public static Block[][] buildMazeMapFromString(String inputString) {
         if (inputString == null)
             return null;
 
@@ -21,7 +21,7 @@ public class MazeFactory {
         int width = lines[0].length();
         int startCount = 0;
         int exitCount = 0;
-        Square[][] squares = new Square[height][width];
+        Block[][] blocks = new Block[height][width];
 
         for (int row = 0; row < height; row++) {
             if (lines[row].length() != width) {
@@ -30,12 +30,12 @@ public class MazeFactory {
             }
 
             for (int col = 0; col < width; col++) {
-                Square square = new Square(row, col, lines[row].charAt(col));
-                squares[row][col] = square;
-                if (square.isStart())
+                Block block = new Block(row, col, lines[row].charAt(col));
+                blocks[row][col] = block;
+                if (block.isStart())
                     startCount++;
 
-                if (square.isExit())
+                if (block.isExit())
                     exitCount++;
             }
         }
@@ -43,10 +43,10 @@ public class MazeFactory {
         if (startCount != 1 || exitCount != 1)
             throw new IllegalArgumentException("Invalid map data - should have one and only one Start point 'S' and one and only one exit 'F'");
 
-        return squares;
+        return blocks;
     }
 
-    public static Square[][] buildMazeMap(File inputFile) {
+    public static Block[][] buildMazeMap(File inputFile) {
         if (inputFile == null) {
             throw new IllegalArgumentException("Invalid input file - file input cannot be null");
         }

@@ -1,8 +1,8 @@
 package uk.gov.dwp.maze;
 
+import uk.gov.dwp.maze.domain.Block;
+import uk.gov.dwp.maze.domain.BlockState;
 import uk.gov.dwp.maze.domain.Path;
-import uk.gov.dwp.maze.domain.Square;
-import uk.gov.dwp.maze.domain.SquareState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,17 +12,16 @@ import java.util.List;
  */
 public class Maze {
 
-    private final Square[][] maze;
+    private final Block[][] maze;
     private final boolean[][] explored;
     private final Path path;
     private final int height;
     private final int width;
 
     /**
-     *
      * @param maze
      */
-    public Maze(final Square[][] maze) {
+    public Maze(final Block[][] maze) {
         if (maze == null)
             throw new IllegalArgumentException("Cannot have null map in Maze");
         this.maze = maze;
@@ -34,6 +33,7 @@ public class Maze {
 
     /**
      * Get the path of the very final route.
+     *
      * @return the Path stack that leads to solution.
      */
     public Path getPath() {
@@ -43,8 +43,8 @@ public class Maze {
     /**
      * Mark a coordinate using the passed in flag.
      *
-     * @param x the row
-     * @param y the column
+     * @param x       the row
+     * @param y       the column
      * @param visited the flag whether this coordinate is visited.
      */
     public void markVisited(int x, int y, boolean visited) {
@@ -55,7 +55,7 @@ public class Maze {
     }
 
     /**
-     * Whether the coordinate square has been explored already.
+     * Whether the coordinate block has been explored already.
      *
      * @param x the row
      * @param y the column
@@ -65,14 +65,14 @@ public class Maze {
         return explored[x][y];
     }
 
-    public boolean [][] getExplored() {
+    public boolean[][] getExplored() {
         return explored;
     }
 
     /**
      * @return instance of the current maze 2-d array, this is not null safe.
      */
-    public Square[][] getSquare() {
+    public Block[][] getBlock() {
         return this.maze;
     }
 
@@ -81,31 +81,31 @@ public class Maze {
      *
      * @param x the row
      * @param y the column
-     * @return the square located at the specific x and y coordinate.
+     * @return the block located at the specific x and y coordinate.
      */
-    public Square getSquare(final int x, final int y) {
+    public Block getBlock(final int x, final int y) {
         if (!validateCoordinates(x, y))
             return null;
         return maze[x][y];
     }
 
     /**
-     * Get the ending square
+     * Get the ending block
      *
-     * @return {@link uk.gov.dwp.maze.domain.Square} represents the ending point.
+     * @return {@link Block} represents the ending point.
      */
-    public Square getExitSquare() {
-        List<Square> exits = findSquare(SquareState.EXIT);
+    public Block getExitBlock() {
+        List<Block> exits = findBlock(BlockState.FINISH);
         return exits.isEmpty() ? null : exits.get(0);
     }
 
     /**
-     * Get the starting square
+     * Get the starting block
      *
-     * @return {@link uk.gov.dwp.maze.domain.Square} represents the starting point.
+     * @return {@link Block} represents the starting point.
      */
-    public Square getStartSquare() {
-        List<Square> starts = findSquare(SquareState.START);
+    public Block getStartBlock() {
+        List<Block> starts = findBlock(BlockState.START);
         return starts.isEmpty() ? null : starts.get(0);
     }
 
@@ -118,39 +118,47 @@ public class Maze {
     }
 
     public int getOpenSpacesCount() {
-        return findSquare(SquareState.OPEN).size();
+        return findBlock(BlockState.OPEN).size();
     }
 
     public int getWallCount() {
-        return findSquare(SquareState.WALLED).size();
+        return findBlock(BlockState.WALLED).size();
     }
 
     public int getStartCount() {
-        return findSquare(SquareState.START).size();
+        return findBlock(BlockState.START).size();
     }
 
     public int getExitCount() {
-        return findSquare(SquareState.EXIT).size();
+        return findBlock(BlockState.FINISH).size();
     }
 
     /**
-     * Handy method to count squares for a specific state. Null safe method.
+     * To count blocks for a specific state.
      *
-     * @param state {@link uk.gov.dwp.maze.domain.SquareState}
-     * @return the occurrences of the SquareState in the map.
+     * @param state {@link BlockState}
+     * @return the occurrences of the BlockState in the map.
      */
-    private List<Square> findSquare(final SquareState state) {
-        List<Square> results = new ArrayList<Square>();
-        for (int i = 0 ; i < getHeight(); i ++) {
+    private List<Block> findBlock(final BlockState state) {
+        List<Block> results = new ArrayList<Block>();
+        for (int i = 0; i < getHeight(); i++) {
             for (int j = 0; j < getWidth(); j++) {
-                Square s = getSquare(i, j);
-                if (s.getState() == state)
+                Block s = getBlock(i, j);
+                if (s.getState() == state) {
                     results.add(s);
+                }
             }
         }
         return results;
     }
 
+    /**
+     * Validates whether the coordinates are with in the range of Maze.
+     *
+     * @param row
+     * @param col
+     * @return true if valid coordinates, false otherwise
+     */
     private boolean validateCoordinates(int row, int col) {
         return !(row < 0 || row >= getHeight() || col < 0 || col >= getWidth());
     }
@@ -167,7 +175,7 @@ public class Maze {
                 } else if (maze[row][col].isExit()) {
                     result.append('F');
                 } else if (explored[row][col]) {
-                    result.append('.');
+                    result.append('*');
                 } else {
                     result.append(' ');
                 }

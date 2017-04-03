@@ -10,6 +10,8 @@ buildscript {
         springMongoVersion = '1.5.1.RELEASE'
         spockVersion = '1.0-groovy-2.4'
         groovyVersion = '2.4.8'
+        cucumberVersion = '1.2.5'
+        junitVersion = '4.12'
     }
     repositories {
         mavenCentral()
@@ -45,8 +47,12 @@ dependencies {
     compile "org.springframework.boot:spring-boot-devtools"
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
-    testCompile "org.spockframework:spock-core:${spockVersion}"
-    testCompile "org.spockframework:spock-spring:${spockVersion}"
+    testCompile("org.spockframework:spock-core:${spockVersion}")
+    testCompile("org.spockframework:spock-spring:${spockVersion}")
+
+    testCompile("info.cukes:cucumber-java8:${cucumberVersion}")
+    testCompile("info.cukes:cucumber-junit:${cucumberVersion}")
+    testCompile("junit:junit:${junitVersion}")
 }
 
 

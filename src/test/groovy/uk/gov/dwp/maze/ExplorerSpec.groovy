@@ -2,8 +2,8 @@ package uk.gov.dwp.maze
 
 import spock.lang.Specification
 import spock.lang.Unroll
-import uk.gov.dwp.maze.domain.Square
-import uk.gov.dwp.maze.domain.SquareState
+import uk.gov.dwp.maze.domain.Block
+import uk.gov.dwp.maze.domain.BlockState
 import uk.gov.dwp.maze.util.MazeUtil
 
 /**
@@ -37,25 +37,25 @@ class ExplorerSpec extends Specification {
     void "test explorer can be dropped at Start Point"() {
 
         given:
-        Square startSquare = maze.getStartSquare()
+        Block startBlock = maze.getStartBlock()
 
         when:
         explorer.exploreMaze()
         def finalPathString = explorer.printExplorersPath()
-        Square[][] outputPath = MazeFactory.buildMazeMapFromString(finalPathString)
-        Square outputSquare = MazeUtil.findSquareByState(outputPath, SquareState.START)
+        Block[][] outputPath = MazeFactory.buildMazeMapFromString(finalPathString)
+        Block outputBlock = MazeUtil.findBlockByState(outputPath, BlockState.START)
 
         then:
-        startSquare.getRow() == outputSquare.getRow()
-        startSquare.getColumn() == outputSquare.getColumn()
-        startSquare == outputSquare
+        startBlock.getRow() == outputBlock.getRow()
+        startBlock.getColumn() == outputBlock.getColumn()
+        startBlock == outputBlock
     }
 
     @Unroll
     void "test explorer can move forward at #x, #y"() {
         when:
 
-        MazeUtil.setExitSquare(maze.getSquare(), maze.getExitSquare(), x, y, state)
+        MazeUtil.setExitBlock(maze.getBlock(), maze.getExitBlock(), x, y, state)
         explorer.exploreMaze()
 
         then:
@@ -67,8 +67,8 @@ class ExplorerSpec extends Specification {
         where:
 
         pathSize | path1          | path2           | x | y | state
-        2        | '(3, 4, EXIT)' | '(3, 3, START)' | 3 | 4 | SquareState.WALLED
-        3        | '(3, 5, EXIT)' | '(3, 4, OPEN)'  | 3 | 5 | SquareState.OPEN
+        2        | '(3, 4, FINISH)' | '(3, 3, START)' | 3 | 4 | BlockState.WALLED
+        3        | '(3, 5, FINISH)' | '(3, 4, OPEN)'  | 3 | 5 | BlockState.OPEN
     }
 
 
@@ -80,15 +80,15 @@ class ExplorerSpec extends Specification {
         then:
         maze?.getPath()?.getPaths()
         maze?.getPath()?.getPaths()?.size() > 0
-        new Square(14, 1, SquareState.EXIT) ==  maze.getPath().getPaths().peek()
+        new Block(14, 1, BlockState.FINISH) == maze.getPath().getPaths().peek()
     }
 
-    void "test put Wall between Start and End has no solution" () {
+    void "test put Wall between Start and End has no solution"() {
 
         when:
-        MazeUtil.setSquare(maze.getSquare(), 3, 4, SquareState.WALLED)
-        MazeUtil.setSquare(maze.getSquare(), 3, 5, SquareState.EXIT)
-        MazeUtil.setSquare(maze.getSquare(), 14, 1, SquareState.OPEN)
+        MazeUtil.setBlock(maze.getBlock(), 3, 4, BlockState.WALLED)
+        MazeUtil.setBlock(maze.getBlock(), 3, 5, BlockState.FINISH)
+        MazeUtil.setBlock(maze.getBlock(), 14, 1, BlockState.OPEN)
 
         explorer.exploreMaze()
 
@@ -96,13 +96,13 @@ class ExplorerSpec extends Specification {
         maze?.getPath()?.getPaths()?.size() == 0
     }
 
-    void "test final path doesn't contain the squares lead to the dead end location (6, 12)" () {
+    void "test final path doesn't contain the blocks lead to the dead end location (6, 12)"() {
 
         when:
         explorer.exploreMaze()
 
         then:
-        !maze.getPath().getPaths().contains(new Square(6, 12, SquareState.OPEN))
+        !maze.getPath().getPaths().contains(new Block(6, 12, BlockState.OPEN))
 
     }
 

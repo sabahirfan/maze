@@ -20,11 +20,15 @@ public class MazeApplication implements CommandLineRunner {
     public void run(String... args) {
         // Start of application
         MazeBuilder builder = new MazeBuilderFile("src/main/resources/Maze1.txt");
-        Optional<Maze> maze = builder.build();
-        if ( maze.isPresent()) {
-             System.out.println(maze.get());
-            Explorer explorer = new Explorer(maze.get());
+        Optional<Maze> mazeOptional = builder.build();
+        if (mazeOptional.isPresent()) {
+            Maze maze = mazeOptional.get();
+            System.out.println(maze);
+            Explorer explorer = new Explorer(maze);
             explorer.exploreMaze();
+
+            System.out.print(maze.getPath().toString());
+
         }
     }
 

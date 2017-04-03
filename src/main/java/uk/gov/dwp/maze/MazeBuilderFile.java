@@ -1,6 +1,6 @@
 package uk.gov.dwp.maze;
 
-import uk.gov.dwp.maze.domain.Square;
+import uk.gov.dwp.maze.domain.Block;
 
 import java.io.File;
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class MazeBuilderFile implements MazeBuilder {
     @Override
     public Optional<Maze> build() {
         try {
-            Square[][] map = MazeFactory.buildMazeMap(file);
+            Block[][] map = MazeFactory.buildMazeMap(file);
             return Optional.ofNullable(new Maze(map));
         } catch (IllegalArgumentException ia) {
             return Optional.empty();

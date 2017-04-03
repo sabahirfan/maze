@@ -29,7 +29,7 @@ class MazeSpec extends Specification {
         then:
 
         maze
-        maze.getSquare()
+        maze.getBlock()
         maze.getHeight() == 15
         maze.getWidth() == 15
         maze.getStartCount() == 1
@@ -45,11 +45,11 @@ class MazeSpec extends Specification {
 
         then:
         maze
-        maze.getSquare(x, y)
-        maze.getSquare(x, y).isWalled()
-        !maze.getSquare(x, y).isOpen()
-        !maze.getSquare(x, y).isExit()
-        !maze.getSquare(x, y).isStart()
+        maze.getBlock(x, y)
+        maze.getBlock(x, y).isWalled()
+        !maze.getBlock(x, y).isOpen()
+        !maze.getBlock(x, y).isExit()
+        !maze.getBlock(x, y).isStart()
 
         where:
         x << [0, 14, 0, 0, 1]
@@ -65,11 +65,11 @@ class MazeSpec extends Specification {
 
         then:
         maze
-        maze.getSquare(3, 3)
-        maze.getSquare(3, 3).isStart()
-        maze.getSquare(3, 3).isOpen()
-        !maze.getSquare(3, 3).isExit()
-        !maze.getSquare(3, 3).isWalled()
+        maze.getBlock(3, 3)
+        maze.getBlock(3, 3).isStart()
+        maze.getBlock(3, 3).isOpen()
+        !maze.getBlock(3, 3).isExit()
+        !maze.getBlock(3, 3).isWalled()
 
     }
 
@@ -82,11 +82,11 @@ class MazeSpec extends Specification {
 
         then:
         maze
-        maze.getSquare(x, y)
-        maze.getSquare(x, y).isOpen()
-        !maze.getSquare(x, y).isStart()
-        !maze.getSquare(x, y).isExit()
-        !maze.getSquare(x, y).isWalled()
+        maze.getBlock(x, y)
+        maze.getBlock(x, y).isOpen()
+        !maze.getBlock(x, y).isStart()
+        !maze.getBlock(x, y).isExit()
+        !maze.getBlock(x, y).isWalled()
 
         where:
         x << [2]
@@ -103,15 +103,15 @@ class MazeSpec extends Specification {
         then:
 
         maze
-        maze.getSquare(x, y)
-        maze.getSquare(x, y).isOpen()
-        !maze.getSquare(x, y).isStart()
-        !maze.getSquare(x, y).isExit()
-        !maze.getSquare(x, y).isWalled()
+        maze.getBlock(x, y)
+        maze.getBlock(x, y).isOpen()
+        !maze.getBlock(x, y).isStart()
+        !maze.getBlock(x, y).isExit()
+        !maze.getBlock(x, y).isWalled()
 
         where:
-        x << [2,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-        y << [1,1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12, 13]
+        x << [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        y << [1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
     }
 
@@ -125,9 +125,9 @@ class MazeSpec extends Specification {
         then:
 
         maze
-        !maze.getSquare(x, y)
-        !maze.getSquare(x, y)
-        !maze.getSquare(x, y)
+        !maze.getBlock(x, y)
+        !maze.getBlock(x, y)
+        !maze.getBlock(x, y)
 
         where:
         x << [-1, -2, 19]

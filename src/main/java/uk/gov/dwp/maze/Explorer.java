@@ -1,6 +1,6 @@
 package uk.gov.dwp.maze;
 
-import uk.gov.dwp.maze.domain.Square;
+import uk.gov.dwp.maze.domain.Block;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -13,7 +13,7 @@ public class Explorer {
 
     private boolean backward;
     private boolean done;
-    private Maze maze;
+    private final Maze maze;
 
     public Explorer(Maze maze) {
         if (maze == null)
@@ -23,18 +23,22 @@ public class Explorer {
     }
 
     public void exploreMaze() {
-        Square startSquare = maze.getStartSquare();
-        if (move(startSquare.getRow(), startSquare.getColumn()))
+        Block startBlock = maze.getStartBlock();
+        if (move(startBlock.getRow(), startBlock.getColumn())) {
             System.out.println(maze);
+        }
     }
 
+
     /**
-     * print the accumulated paths lead to the 'F' point.
+     * Builds the accumulated paths lead to the 'F' point as String
+     *
+     * @return
      */
     public String printExplorersPath() {
         StringBuilder result = new StringBuilder(maze.getWidth() * maze.getHeight());
 
-        Square[][] map = maze.getSquare();
+        Block[][] map = maze.getBlock();
         for (int row = 0; row < maze.getHeight(); row++) {
             for (int col = 0; col < maze.getWidth(); col++) {
 
@@ -44,8 +48,8 @@ public class Explorer {
                     result.append('S');
                 } else if (map[row][col].isExit()) {
                     result.append('F');
-                } else if (maze.getPath().isOnPath(maze.getSquare(row, col))) {
-                    result.append('.');
+                } else if (maze.getPath().isOnPath(maze.getBlock(row, col))) {
+                    result.append('*');
                 } else {
                     result.append(' ');
                 }
@@ -57,12 +61,12 @@ public class Explorer {
     }
 
     /**
-     * Get the previous explored square.
+     * Get the previous explored block.
      *
-     * @return {@link uk.gov.dwp.maze.domain.Square} previously explored in current path.
+     * @return {@link Block} previously explored in current path.
      */
-    public Square getPreviousExplored() {
-        return maze.getPath().getPreviousExploredSquare();
+    public Block getPreviousExplored() {
+        return maze.getPath().getPreviousExploredBlock();
     }
 
     /**
@@ -74,13 +78,13 @@ public class Explorer {
      */
     private boolean move(final int row, final int col) {
         //System.out.println(maze);
-        Square currentSquare = maze.getSquare(row, col);
+        Block currentBlock = maze.getBlock(row, col);
 
-        if (currentSquare.isWalled() && !backward) {
+        if (currentBlock.isWalled() && !backward) {
             return false;
         } else if (maze.isExplored(row, col) && !backward) {
             return false;
-        } else if (currentSquare.isExit()) {
+        } else if (currentBlock.isExit()) {
             maze.markVisited(row, col, true);
             // found the exit 'F', need to notify the system to start recording the path backwards
             done = true;
@@ -88,17 +92,17 @@ public class Explorer {
         } else {
             // can hit dead end if goes into this block - so we need to going backward until it hits another open route.
             maze.markVisited(row, col, true);
-            Square nextSquare = turn(row, col);
+            Block nextBlock = turn(row, col);
 
-            if (nextSquare != null) {
-                if (move(nextSquare.getRow(), nextSquare.getColumn())) {
+            if (nextBlock != null) {
+                if (move(nextBlock.getRow(), nextBlock.getColumn())) {
                     System.out.println(maze);
                     printExplorersPath();
                     return !done;
                 }
             } else {
-                // get previous explored square
-                Square previousExplored = getPreviousExplored();
+                // get previous explored block
+                Block previousExplored = getPreviousExplored();
                 this.backward = true;
                 if (previousExplored != null && move(previousExplored.getRow(), previousExplored.getColumn())) {
                     System.out.println(maze);
@@ -114,57 +118,57 @@ public class Explorer {
      *
      * @param row row ordinal
      * @param col column ordinal
-     * @return null if there are not open square in the next move.
+     * @return the next Block {@link Block} to move, null if there are not open block in the next move.
      */
-    private Square turn(final int row, final int col) {
-        Set<Square> openSquares = getMovementOptions(maze, row, col);
-        // if there are more than one open squares in front randomly pick one up.
-        int size = openSquares.size();
+    private Block turn(final int row, final int col) {
+        Set<Block> openBlocks = getMovementOptions(maze, row, col);
+        // if there are more than one open blocks in front randomly pick one up.
+        int size = openBlocks.size();
         if (size > 0) {
             Random generator = new Random();
             int index = generator.nextInt(size);
-            return openSquares.toArray(new Square[size])[index];
+            return openBlocks.toArray(new Block[size])[index];
         }
         return null;
     }
 
     /**
-     * Finding the adjacent empty spaces to the current square.
+     * Finding the adjacent empty spaces to the current block.
      * <p>
      *
      * @param currentRow row ordinal
      * @param currentCol column ordinal
-     * @return open Squares in a Set
+     * @return a set {@link java.util.Set< Block >} of open Blocks
      */
-    public Set<Square> getMovementOptions(Maze maze, final int currentRow, final int currentCol) {
-        Set<Square> openSquares = new HashSet<>();
+    public Set<Block> getMovementOptions(Maze maze, final int currentRow, final int currentCol) {
+        Set<Block> openBlocks = new HashSet<>();
 
-        // Add left
-        Square squareLeft = maze.getSquare(currentRow, currentCol - 1);
-        if (squareLeft.isOpen() &&
+        // Check and add left option
+        Block blockLeft = maze.getBlock(currentRow, currentCol - 1);
+        if (blockLeft.isOpen() &&
                 !maze.isExplored(currentRow, currentCol - 1)) {
-            openSquares.add(squareLeft);
+            openBlocks.add(blockLeft);
         }
-        // Add up
-        Square squareUp = maze.getSquare(currentRow - 1, currentCol);
-        if (squareUp.isOpen() &&
+        // Check and add up option
+        Block blockUp = maze.getBlock(currentRow - 1, currentCol);
+        if (blockUp.isOpen() &&
                 !maze.isExplored(currentRow - 1, currentCol)) {
-            openSquares.add(squareUp);
+            openBlocks.add(blockUp);
         }
-        // Add Down
-        Square squareDown = maze.getSquare(currentRow + 1, currentCol);
-        if (squareDown.isOpen() &&
+        // Check and add Down option
+        Block blockDown = maze.getBlock(currentRow + 1, currentCol);
+        if (blockDown.isOpen() &&
                 !maze.isExplored(currentRow + 1, currentCol)) {
-            openSquares.add(squareDown);
+            openBlocks.add(blockDown);
         }
-        // Add right
-        Square squareRight = maze.getSquare(currentRow, currentCol + 1);
-        if (squareRight.isOpen() &&
+        // Check and add right option
+        Block blockRight = maze.getBlock(currentRow, currentCol + 1);
+        if (blockRight.isOpen() &&
                 !maze.isExplored(currentRow, currentCol + 1)) {
-            openSquares.add(squareRight);
+            openBlocks.add(blockRight);
         }
 
-        return openSquares;
+        return openBlocks;
     }
 
 
