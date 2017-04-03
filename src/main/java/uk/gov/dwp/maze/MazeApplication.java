@@ -4,6 +4,8 @@ package uk.gov.dwp.maze;
  * Created by sabahirfan on 31/03/2017.
  */
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +18,8 @@ import java.util.Optional;
 @SpringBootApplication
 public class MazeApplication implements CommandLineRunner {
 
+    private static final Logger log = LoggerFactory.getLogger(MazeApplication.class);
+
     @Override
     public void run(String... args) {
         // Start of application
@@ -23,11 +27,11 @@ public class MazeApplication implements CommandLineRunner {
         Optional<Maze> mazeOptional = builder.build();
         if (mazeOptional.isPresent()) {
             Maze maze = mazeOptional.get();
-            System.out.println(maze);
+            log.info(maze.toString());
             Explorer explorer = new Explorer(maze);
             explorer.exploreMaze();
 
-            System.out.print(maze.getPath().toString());
+            log.info(maze.getPath().toString());
 
         }
     }

@@ -1,5 +1,7 @@
 package uk.gov.dwp.maze;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.gov.dwp.maze.domain.Block;
 
 import java.util.HashSet;
@@ -10,6 +12,8 @@ import java.util.Set;
  * Created by sabahirfan on 02/04/2017.
  */
 public class Explorer {
+
+    private static final Logger log = LoggerFactory.getLogger(Explorer.class);
 
     private boolean backward;
     private boolean done;
@@ -25,7 +29,7 @@ public class Explorer {
     public void exploreMaze() {
         Block startBlock = maze.getStartBlock();
         if (move(startBlock.getRow(), startBlock.getColumn())) {
-            System.out.println(maze);
+            log.info(maze.toString());
         }
     }
 
@@ -56,7 +60,7 @@ public class Explorer {
             }
             result.append('\n');
         }
-        System.out.println(result.toString());
+        log.info(result.toString());
         return result.toString();
     }
 
@@ -77,7 +81,7 @@ public class Explorer {
      * @return true if there is open movement.
      */
     private boolean move(final int row, final int col) {
-        //System.out.println(maze);
+        //log.info(maze.toString());
         Block currentBlock = maze.getBlock(row, col);
 
         if (currentBlock.isWalled() && !backward) {
@@ -96,7 +100,7 @@ public class Explorer {
 
             if (nextBlock != null) {
                 if (move(nextBlock.getRow(), nextBlock.getColumn())) {
-                    System.out.println(maze);
+                    log.info(maze.toString());
                     printExplorersPath();
                     return !done;
                 }
@@ -105,7 +109,7 @@ public class Explorer {
                 Block previousExplored = getPreviousExplored();
                 this.backward = true;
                 if (previousExplored != null && move(previousExplored.getRow(), previousExplored.getColumn())) {
-                    System.out.println(maze);
+                    log.info(maze.toString());
                     return !done;
                 }
             }

@@ -1,5 +1,8 @@
 package uk.gov.dwp.maze.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import uk.gov.dwp.maze.Explorer;
 import uk.gov.dwp.maze.domain.Block;
 import uk.gov.dwp.maze.domain.BlockState;
 
@@ -7,6 +10,8 @@ import uk.gov.dwp.maze.domain.BlockState;
  * Created by sabahirfan on 31/03/2017.
  */
 public class MazeUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(MazeUtil.class);
 
     public static Block findBlockByState(Block[][] blocks, final BlockState state) {
 
@@ -23,15 +28,15 @@ public class MazeUtil {
     /**
      * To reset the exit block to any point chosen in the map. This is for testing purpose only.
      *
-     * @param blocks the maze map.
+     * @param blocks            the maze map.
      * @param existingExitPoint the existing exit block in the maze map.
-     * @param xOrdinal the new x ordinal for the new exit block
-     * @param yOrdinal the new y ordinal for the new exit block.
-     * @param state the state the previous exit point becomes to
+     * @param xOrdinal          the new x ordinal for the new exit block
+     * @param yOrdinal          the new y ordinal for the new exit block.
+     * @param state             the state the previous exit point becomes to
      */
     public static void setExitBlock(Block[][] blocks, Block existingExitPoint, int xOrdinal, int yOrdinal, BlockState state) {
         int yLength = blocks[0].length - 1;
-        if (xOrdinal < 0 || xOrdinal> blocks.length - 1 || yOrdinal < 0 || yOrdinal > yLength) {
+        if (xOrdinal < 0 || xOrdinal > blocks.length - 1 || yOrdinal < 0 || yOrdinal > yLength) {
             return; // does nothing.
         }
 
@@ -42,8 +47,8 @@ public class MazeUtil {
         blocks[x][y] = new Block(x, y, state);
 
         //setting the new x and y the new exit point.
-        blocks[xOrdinal][yOrdinal] = new Block(xOrdinal,yOrdinal, 'F');
-        System.out.println(blocks);
+        blocks[xOrdinal][yOrdinal] = new Block(xOrdinal, yOrdinal, 'F');
+        // log.info(blocks.toString());
     }
 
     public static void setBlock(Block[][] blocks, int xOrdinal, int yOrdinal, BlockState state) {
